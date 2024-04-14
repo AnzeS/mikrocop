@@ -1,0 +1,36 @@
+version: '3.4'
+
+services:
+  mikrocop.managingusers:
+    image: ${DOCKER_REGISTRY-}mikrocopmanagingusers
+    build:
+      context: .
+      dockerfile: Mikrocop.ManagingUsers/Dockerfile
+    networks:
+      - backend
+
+  mikrocop.database:
+    container_name: postgresMikrocop
+    image: postgres:16.2-alpine3.19
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres_!
+      - PGDATA=/var/lib/postgresql/data
+    volumes:
+      - pg_database_m:/var/lib/postgresql/data
+    ports:
+      - "5434:5432"
+    networks:
+      - backend
+
+volumes:
+  pg_database_m:
+    name: postgres_mikrocop
+
+networks:
+  backend:
+    name: backend
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: mikrocop
